@@ -33,7 +33,7 @@ func (b *Bot) AddCallback(value string, c Callback) {
 func (b *Bot) CallbackLoop() {
 	for {
 		select {
-		case msg, ok := <-b.Data:
+		case msg, ok := <-b.events:
 			if ok {
 				b.messageCallback(msg)
 			} else {

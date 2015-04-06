@@ -4,76 +4,23 @@ import (
 	"bufio"
 	"fmt"
 	"net"
-	"reflect"
 	"testing"
 	"time"
 )
 
 func TestNewBot(t *testing.T) {
 	config := func(b *Bot) {
-		b.Server = "irc.example.org"
-		b.OriginalName = "test-bot"
-		b.User = "test-user"
+		b.user = "test-user"
 	}
-	wantOpts := map[string]bool{
-		"rejoin":    true,
-		"connected": true,
+	b := New("irc.example.org", "test-bot", config)
+	if b.server != "irc.example.org" {
+		t.Fatalf("Wanted server %s, got %s", "irc.example.org", b.server)
 	}
-	b := NewBot(config)
-	if b.Server != "irc.example.org" {
-		t.Fatalf("Wanted server %s, got %s", "irc.example.org", b.Server)
+	if b.name != "test-bot" {
+		t.Fatalf("Wanted name %s, got %s", "test-bot", b.name)
 	}
-	if b.OriginalName != "test-bot" {
-		t.Fatalf("Wanted name %s, got %s", "test-bot", b.OriginalName)
-	}
-	if b.User != "test-user" {
-		t.Fatalf("Wanted user %s, got %s", "test-user", b.User)
-	}
-	if !reflect.DeepEqual(b.Options, wantOpts) {
-		t.Fatalf("Wanted config options %s, got %s", wantOpts, b.Options)
-	}
-}
-
-func TestClassicHelper(t *testing.T) {
-	b := Classic("irc.example.org", "test-bot")
-	wantOpts := map[string]bool{
-		"rejoin":    true,
-		"connected": true,
-	}
-	if b.Server != "irc.example.org" {
-		t.Fatalf("Wanted server %s, got %s", "irc.example.org", b.Server)
-	}
-	if b.OriginalName != "test-bot" {
-		t.Fatalf("Wanted name %s, got %s", "test-bot", b.OriginalName)
-	}
-	if b.User != "test-bot" {
-		t.Fatalf("Wanted user %s, got %s", "test-bot", b.User)
-	}
-	if !reflect.DeepEqual(b.Options, wantOpts) {
-		t.Fatalf("Wanted config options %s, got %s", wantOpts, b.Options)
-	}
-}
-
-func TestPasswordHelper(t *testing.T) {
-	b := WithLogin("irc.example.org", "test-bot", "test-user", "test-password")
-	wantOpts := map[string]bool{
-		"rejoin":    true,
-		"connected": true,
-	}
-	if b.Server != "irc.example.org" {
-		t.Fatalf("Wanted server %s, got %s", "irc.example.org", b.Server)
-	}
-	if b.OriginalName != "test-bot" {
-		t.Fatalf("Wanted name %s, got %s", "test-bot", b.OriginalName)
-	}
-	if b.User != "test-user" {
-		t.Fatalf("Wanted user %s, got %s", "test-user", b.User)
-	}
-	if b.Password != "test-password" {
-		t.Fatalf("Wanted password %s, got %s", "test-password", b.Password)
-	}
-	if !reflect.DeepEqual(b.Options, wantOpts) {
-		t.Fatalf("Wanted config options %s, got %s", wantOpts, b.Options)
+	if b.user != "test-user" {
+		t.Fatalf("Wanted user %s, got %s", "test-user", b.user)
 	}
 }
 
@@ -83,7 +30,7 @@ func TestConnect(t *testing.T) {
 		t.Fatalf("Wanted listener, got err: %v", err)
 	}
 
-	b := Classic(l.Addr().String(), "test-bot")
+	b := New(l.Addr().String(), "test-bot")
 
 	not := make(chan struct{})
 	go dummyHelper(l, not)
@@ -107,7 +54,7 @@ func TestSendsData(t *testing.T) {
 		t.Fatalf("Wanted listener, got err: %v", err)
 	}
 
-	b := WithLogin(l.Addr().String(), "test-bot", "test-user", "test-password")
+	b := New(l.Addr().String(), "test-bot", WithLogin("test-user", "test-password"))
 
 	not := make(chan string)
 	go echoHelper(l, not)
@@ -142,7 +89,7 @@ func TestSendsDataWithPassword(t *testing.T) {
 		t.Fatalf("Wanted listener, got err: %v", err)
 	}
 
-	b := Classic(l.Addr().String(), "test-bot")
+	b := New(l.Addr().String(), "test-bot")
 
 	not := make(chan string)
 	go echoHelper(l, not)
@@ -177,7 +124,7 @@ func TestReconnect(t *testing.T) {
 		t.Fatalf("Wanted listener, got err: %v", err)
 	}
 
-	b := Classic(l.Addr().String(), "test-bot")
+	b := New(l.Addr().String(), "test-bot")
 
 	not := make(chan struct{})
 	go dcHelper(l, not)

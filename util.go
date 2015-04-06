@@ -8,17 +8,17 @@ func (b *Bot) connectMessages() []*irc.Message {
 	messages := []*irc.Message{}
 	messages = append(messages, &irc.Message{
 		Command:  irc.USER,
-		Params:   []string{b.User, "0", "*"},
-		Trailing: b.User,
+		Params:   []string{b.user, "0", "*"},
+		Trailing: b.user,
 	})
 	messages = append(messages, &irc.Message{
 		Command: irc.NICK,
-		Params:  []string{b.OriginalName},
+		Params:  []string{b.name},
 	})
-	if b.Password != "" {
+	if b.password != "" {
 		messages = append(messages, &irc.Message{
 			Command: irc.PASS,
-			Params:  []string{b.Password},
+			Params:  []string{b.password},
 		})
 	}
 	return messages

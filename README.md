@@ -28,7 +28,7 @@ func init() {
 }
 
 func main() {
-	bot := ircx.Classic(*server, *name)
+	bot := ircx.New(*server, *name)
 	if err := bot.Connect(); err != nil {
 		log.Panicln("Unable to dial IRC Server ", err)
 	}

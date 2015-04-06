@@ -53,7 +53,7 @@ func TestTLSConnect(t *testing.T) {
 
 	// prep bot/bot config
 	botConfig := &tls.Config{InsecureSkipVerify: true}
-	b := WithLoginTLS(l.Addr().String(), "test-bot", "test-user", "test-password", botConfig)
+	b := New(l.Addr().String(), "test-bot", WithLogin("test-user", "test-password"), WithTLS(botConfig))
 
 	not := make(chan string)
 	go echoHelper(l, not)
