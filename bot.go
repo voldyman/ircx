@@ -138,6 +138,11 @@ func (b *Bot) Reconnect() {
 	}
 }
 
+// Send message to the connected server directly
+func (b *Bot) SendMessage(m *irc.Message) error {
+	return b.sender.Send(m)
+}
+
 // ReadLoop sets a timeout of 300 seconds, and then attempts to read
 // from the IRC server. If there is an error, it calls Reconnect
 func (b *Bot) ReadLoop() {
