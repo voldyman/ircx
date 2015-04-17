@@ -1,7 +1,7 @@
+**notice** this is a fork to add a small function to send messages out of the context of a message received
+
 ircx
 ====
-[![Build Status](https://travis-ci.org/nickvanw/ircx.svg?branch=master)](https://travis-ci.org/nickvanw/ircx)
-
 ircx is a very basic IRC bot written on top of the wonderfully small [sorcix/irc](https://github.com/sorcix/irc) library. It's designed to be a small building block, a small example of one way to use the library.
 
 Using it is very simple:
